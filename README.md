@@ -219,14 +219,19 @@ The search interface provides as-you-type autocompletion across three dimensions
 
 ## Benchmark Results
 
-### 1. Bi-Encoder Retriever (Recall@K evaluated on held-out catalog)
+### 1. Bi-Encoder Retriever (Recall@K evaluated against full 64,552 catalog books)
 
-| Metric | Pretrained Baseline | v3 (Initial Fine-Tune) | v4 (Cycle 1 Mining) | v5 (Cycle 2 Best) | Absolute Gain |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Recall@1** | 45.1% | 62.4% | 65.2% | **67.3%** | **+22.2%** |
-| **Recall@5** | 68.3% | 80.1% | 83.4% | **85.6%** | **+17.3%** |
-| **Recall@10** | 75.2% | 85.3% | 88.1% | **89.4%** | **+14.2%** |
-| **Recall@50** | 88.0% | 93.2% | 94.8% | **95.6%** | **+7.6%** |
+Evaluated across **32,170 test queries** and **32,340 validation queries** against the entire 64,552-book catalog:
+
+| Metric | Pretrained Baseline (`v0`) | v3 (Initial Fine-Tune) | v4 (Cycle 1 Hard Negs) | v5 (Cycle 2 Best) | Absolute Gain | Relative Improvement |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Recall@1** | **11.52%** | 31.26% | 26.92% | **31.32%** | **+19.80%** | **~2.7× boost** |
+| **Recall@5** | **32.80%** | 63.28% | 55.90% | **63.90%** | **+31.10%** | **~1.9× boost** |
+| **Recall@10** | **38.84%** | 69.52% | 62.16% | **70.20%** | **+31.36%** | **~1.8× boost** |
+| **Recall@50** | **53.22%** | 81.47% | 75.65% | **82.12%** | **+28.90%** | **~1.5× boost** |
+
+> **Why the Two-Stage Architecture is Essential:**  
+> In dense retrieval over a 64,552-book catalog, the Bi-Encoder's job is **high-recall candidate generation** (reaching **70.2% Recall@10** and **82.1% Recall@50**). Stage 2 (**Cross-Encoder Reranker**) then scores full query-document cross-attention over these candidates, boosting top-1 precision to **88.73% MRR@10**.
 
 ### 2. Cross-Encoder Reranker (2,998 validation queries)
 
