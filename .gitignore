@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+.venv_gpu/
+venv/
+ENV/
+
+# Large Datasets & Binary Artifacts (> 50-100MB)
+*.jsonl
+*.gz
+*.zip
+*.sqlite3
+*.pt
+*.npy
+catalog_bge_embeddings_fp16.pt
+catalog_embeddings_mining.npy
+catalog_ids_mining.json
+dataset_quality_review.csv
+
+# Model Checkpoints & Output Directories
+bge_small_*_output/
+bge_reranker_*_output/
+best_model/
+checkpoints/
+resume_checkpoint.pt
+resume_state.pt
+emb_cache/
+
+# OS / Editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

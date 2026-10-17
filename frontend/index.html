@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goodreads 2.3M Semantic Discovery & Neural Recommendation Engine</title>
+  <meta name="description" content="State-of-the-art hybrid book search and recommendation platform combining dense vector ANN, BM25 keyword search, cross-encoder reranking, and sub-millisecond Redis caching." />
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="logo-wrapper">
+        <div class="logo-icon">📚</div>
+        <div class="logo-text">
+          <h1>NeuralBooks</h1>
+          <p>2.3M Goodreads Hybrid Retrieval & Reranking</p>
+        </div>
+      </div>
+
+      <div class="system-status-pills">
+        <div class="status-pill" id="pill-es" title="Elasticsearch 8.17.2 BM25 Cluster">
+          <span class="status-dot"></span>
+          <span>ES Index: <b>50,000 docs</b></span>
+        </div>
+        <div class="status-pill" id="pill-redis" title="Multi-tier Redis & Semantic Cache">
+          <span class="status-dot"></span>
+          <span>Redis: <b>Active (0ms)</b></span>
+        </div>
+        <div class="status-pill" id="pill-model" title="Fine-tuned BGE Retriever on Hugging Face">
+          <span class="status-dot"></span>
+          <span>Retriever: <b>BGE-small</b></span>
+        </div>
+        <div class="status-pill" id="pill-rerank" title="Fine-tuned BGE Cross-Encoder on Hugging Face">
+          <span class="status-dot"></span>
+          <span>Reranker: <b>BGE-Reranker-base</b></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search Hero -->
+    <section class="search-hero">
+      <h2 class="hero-headline">Describe any <span>story</span> or feeling.</h2>
+      <p class="hero-subtitle">Dual-stage hybrid retrieval powered by fine-tuned dense embeddings, BM25 keyword search, and neural cross-reranking.</p>
+
+      <!-- Search Input & Autocomplete -->
+      <div class="search-box-wrapper">
+        <div class="search-input-container">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search by title, author, plot premise, atmosphere, or complex reading taste..." 
+            autocomplete="off"
+          />
+          <button id="clearSearchBtn" class="clear-btn" title="Clear search">✕</button>
+          <button id="searchBtn" class="search-btn">
+            <span>Search</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+
+        <!-- Autocomplete Dropdown -->
+        <div id="autocompleteDropdown" class="autocomplete-dropdown">
+          <div class="autocomplete-tabs">
+            <div class="ac-tab active" data-type="all">All Suggestions</div>
+            <div class="ac-tab" data-type="title">Titles</div>
+            <div class="ac-tab" data-type="author">Authors</div>
+            <div class="ac-tab" data-type="genre">Genres</div>
+          </div>
+          <div id="acResults" class="ac-results">
+            <!-- Autocomplete items rendered here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Taste Presets & Engine Options -->
+      <div class="search-controls">
+        <div class="quick-prompts">
+          <button class="prompt-chip" data-query="dystopian surveillance state and psychological control">👁️ Dystopian Surveillance</button>
+          <button class="prompt-chip" data-query="enemies to lovers fantasy romance with magic and royalty">⚔️ Enemies to Lovers</button>
+          <button class="prompt-chip" data-query="space opera with intergalactic civilization and spaceships">🚀 Space Opera</button>
+          <button class="prompt-chip" data-query="deep psychological thriller with unreliable narrator">🧠 Psychological Thriller</button>
+          <button class="prompt-chip" data-query="Good Harbor Anita Diamant">📖 Good Harbor (Author Search)</button>
+        </div>
+
+        <div class="engine-toggles">
+          <label class="toggle-label" title="Enable Redis exact match and semantic vector caching">
+            <input type="checkbox" id="toggleCache" checked />
+            <span>⚡ Multi-tier Cache</span>
+          </label>
+          <label class="toggle-label" title="Enable Cross-Encoder precision reranker">
+            <input type="checkbox" id="toggleReranker" checked />
+            <span>🎯 Cross-Reranker</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <main>
+      <div class="results-header">
+        <div class="results-count" id="resultsCount">
+          Ready to discover. Type a query above or click a taste chip.
+        </div>
+        <div class="genre-filter-pills" id="genreFilterBar">
+          <!-- Optional quick genre filter pills -->
+        </div>
+      </div>
+
+      <!-- Results Grid -->
+      <div id="booksGrid" class="books-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Telemetry Sticky Bar -->
+  <footer class="telemetry-bar" id="telemetryBar">
+    <div class="telemetry-left">
+      <span class="latency-badge compute-run" id="telemetryStatus">READY</span>
+      <span class="breakdown-item">Total: <span id="telTotal">--</span> ms</span>
+      <span class="breakdown-item">Cache: <span id="telCache">--</span> ms</span>
+      <span class="breakdown-item">Dense Vector: <span id="telDense">--</span> ms</span>
+      <span class="breakdown-item">BM25 Keyword: <span id="telBM25">--</span> ms</span>
+      <span class="breakdown-item">Cross-Reranker: <span id="telRerank">--</span> ms</span>
+    </div>
+    <div class="telemetry-right">
+      <span class="breakdown-item">Candidates Retrieved: <span id="telCandidates">--</span></span>
+    </div>
+  </footer>
+
+  <!-- Recommendation Drawer Modal -->
+  <div id="recommendationModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 id="recModalTitle">Similar Books Recommendation</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);" id="recModalSub">Dense Vector Nearest Neighbors</p>
+        </div>
+        <button id="closeRecModal" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="recModalGrid" class="recommendations-grid">
+          <!-- Rendered recommendations -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
