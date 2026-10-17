@@ -73,12 +73,12 @@ base_model: BAAI/bge-small-en-v1.5
 
 Evaluated against the complete catalog of 64,552 books:
 
-| Metric | Pretrained (`bge-small-en-v1.5`) | Fine-Tuned (`book_recs_embed`) | Absolute Improvement |
+| Metric | Pretrained (`bge-small-en-v1.5`) | Fine-Tuned (`book_recs_embed` v5) | Absolute Improvement |
 | :--- | :---: | :---: | :---: |
-| **Recall@1** | 45.2% | **67.1%** | **+21.9%** |
-| **Recall@5** | 68.4% | **85.3%** | **+16.9%** |
-| **Recall@10** | 75.1% | **89.2%** | **+14.1%** |
-| **Recall@50** | 88.2% | **95.1%** | **+6.9%** |
+| **Recall@1** | 11.52% | **31.32%** | **+19.80%** (~2.7×) |
+| **Recall@5** | 32.80% | **63.90%** | **+31.10%** (~1.9×) |
+| **Recall@10** | 38.84% | **70.20%** | **+31.36%** (~1.8×) |
+| **Recall@50** | 53.22% | **82.12%** | **+28.90%** (~1.5×) |
 
 ## 🛠️ Usage
 
